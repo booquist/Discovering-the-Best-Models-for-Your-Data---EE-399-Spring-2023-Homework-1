@@ -13,7 +13,7 @@ Data fitting is a method used to create a mathematical model that best approxima
 ### 2. **Least-Squares Error** 
 Least-squares error is a widely used method to measure the difference between predicted values and observed data points. The least-squares error is defined as:
 
-$E = \frac{1}{n} \sum_{j=1}^{n} (f(x_j) - y_j)^2$,
+$E = \frac{1}{n} \sum_{j=1}^{N} (f(x_j) - y_j)^2$,
 
 where $n$ is the number of data points, $f(x_j)$ is the predicted value for the $j$-th data point, and $y_j$ is the observed value for the $j$-th data point.
 
@@ -78,4 +78,10 @@ The 19th-degree polynomial model, while having great flexibility, suffers from o
 In conclusion, our computational results demonstrate the importance of choosing an appropriate model for data fitting. Simpler models, such as linear, parabolic, or sinusoidal, can provide adequate fits without overfitting, while more complex models like high-degree polynomials may overfit the data and perform poorly on unseen data.
 
 ## V. Summary and Conclusions
-Finally, we summarize our findings and provide conclusions on the data fitting process. We discuss the implications of our results and provide recommendations for future work in this area. Additionally, we include the code used for this project and provide instructions for running the code.
+In this project, we explored the data fitting process using sinusoidal and polynomial models. We used the least-squares error metric to evaluate the performance of the models and employed parameter sweeping techniques to visualize the loss landscape. <br>
+
+Our results showed that the sinusoidal model was able to capture the underlying trend in the data and had a lower error than the polynomial models. Additionally, the loss landscape provided insights into the sensitivity of the model's performance to changes in its parameters. <br>
+
+In conclusion, data fitting is a powerful tool for approximating trends in data and can be achieved using parameterized functions and optimization techniques. Our findings suggest that the sinusoidal model may be a good choice for this particular dataset. For future work, it would be interesting to explore other types of models and evaluate their performance using different error metrics. <br>
+
+The code used for this project is included in this repository.
