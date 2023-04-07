@@ -1,8 +1,9 @@
 # Discovering-the-Best-Models-for-Your-Data---EE-399-Spring-2023-Homework-1
 **Author:** Brendan Oquist <br>
+**Abstract:** This report explores data fitting techniques using least-squares error, including parameter sweeping and loss landscapes. We apply these techniques to a given dataset and investigate various models, such as sinusoids and polynomials. Our findings provide valuable insights into the process of data fitting for machine learning and numerical methods applications.
 
 ## I. Introduction and Overview
-**Abstract:** This report explores data fitting techniques using least-squares error, including parameter sweeping and loss landscapes. We apply these techniques to a given dataset and investigate various models, such as sinusoids and polynomials. Our findings provide valuable insights into the process of data fitting for machine learning and numerical methods applications.
+This project explores the use of data fitting techniques to create mathematical models that capture underlying trends or patterns in observed data. We begin by introducing the concept of least-squares error, a widely used method to measure the difference between predicted values and observed data points. We then discuss parameter sweeping techniques, which involve systematically varying the values of one or more model parameters to explore their effect on the error metric. To visualize the resulting error landscapes, we introduce the concept of loss landscapes, which provide a useful tool for identifying parameter combinations that provide better model performance.
 
 ## II. Theoretical Background
 In this section, we provide the necessary mathematical background for data fitting, including least-squares error, parameter sweeping techniques, and loss landscapes. We also introduce the models we used, such as sinusoids and polynomials.
