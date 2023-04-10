@@ -91,8 +91,6 @@ As shown by the graph: <br> ![image](https://user-images.githubusercontent.com/1
 We generated a 2D loss landscape by fixing two parameters at a time and sweeping through values of the other two parameters. We used the error_landscape function, which calculates the error grid for a given combination of fixed and swept parameters. For each combination of fixed and swept parameters, we used the pcolor function from the matplotlib.pyplot library to visualize the results in a grid.
 
 ```
-import itertools
-
 def error_landscape(fixed_params, param_ranges, X, Y):
     grid_size = len(param_ranges[0])
     error_grid = np.zeros((grid_size, grid_size))
@@ -104,27 +102,40 @@ def error_landscape(fixed_params, param_ranges, X, Y):
     return error_grid
 
 # Parameter sweep ranges
-sweep_range = np.linspace(-10, 10, 100)
+sweep_ranges = {
+    'A': np.linspace(-10, 10, 100),
+    'B': np.linspace(0, 2, 100),
+    'C': np.linspace(-1, 2, 100),
+    'D': np.linspace(20, 40, 100),
+}
+
+A, B, C, D = 2.1717, 0.9093, 0.7325, 31.4528  # Optimal parameters obtained from scipy minimize
 
 # Fixed and swept parameter combinations
 combinations = [
-    ((B, D), (A, C)),
-    ((A, C), (B, D)),
-    ((A, D), (B, C)),
-    ((A, B), (C, D)),
+    ((A, B), ('A', 'B')),
+    ((C, B), ('C', 'B')),
+    ((A, C), ('A', 'C')),
+    ((A, D), ('A', 'D')),
+    ((B, C), ('B', 'C')),
+    ((C, D), ('C', 'D')),
 ]
 
-fig, axs = plt.subplots(2, 2, figsize=(12, 12))
+fig, axs = plt.subplots(3, 2, figsize=(10, 20))  # Change figsize to (10, 20) for more space between plots
 
 for idx, (fixed_params, swept_params) in enumerate(combinations):
-    error_grid = error_landscape(fixed_params, (sweep_range, sweep_range), X, Y)
+    error_grid = error_landscape(fixed_params, (sweep_ranges[swept_params[0]], sweep_ranges[swept_params[1]]), X, Y)
     ax = axs[idx // 2, idx % 2]
-    c = ax.pcolor(sweep_range, sweep_range, error_grid, shading='auto')
+    c = ax.pcolor(sweep_ranges[swept_params[0]], sweep_ranges[swept_params[1]], error_grid, shading='auto')
     ax.set_xlabel(f'{swept_params[0]}')
     ax.set_ylabel(f'{swept_params[1]}')
-    ax.set_title(f'Error landscape for {swept_params} with {fixed_params} fixed')
+    ax.set_title(f'Error landscape for {swept_params[0]}, {swept_params[1]} with {fixed_params[0]}, {fixed_params[1]} fixed')
     fig.colorbar(c, ax=ax)
 ```
+
+This yields the following 2D loss landscape: <br>
+![image](https://user-images.githubusercontent.com/103399658/231011906-e2f5fada-86fd-4b27-b31e-401c52ae7234.png)
+
 
 **Fitting Linear, Parabolic, and 19th-Degree Polynomial Models** <br>
 Using the first 20 data points as training data, we fitted linear, parabolic, and 19th-degree polynomial models to the data using the Polynomial.fit function from the NumPy's polynomial module. We then computed the least-squares errors for these models on both the training and test data (the remaining 10 data points). We observed a large degree of overfitting for the 19th-degree polynomial model, resulting in 0 error on the training data but massive error on the test data.
@@ -166,14 +177,22 @@ Removing the 19th degree polynomial, and we can see much less error: <br>
 **Modifying Training Data and Comparing Results** <br>
 We repeated the process of fitting linear, parabolic, and 19th-degree polynomial models, but this time we used the first 10 and last 10 data points as training data. The test data consisted of the 10 middle data points. We computed the least-squares errors for these models on both the training and test data and observed extreme overfitting for the 19th-degree polynomial model, with 0 error on the outskirts of the data but a massive error in the middle.
 
-By implementing these algorithms and techniques, we were able to explore various data fitting models, analyze their performance on the given dataset, and gain insights into the effects of parameter choices and training data selection on model performance.
+This can be viewed in the following graph, having a similar level of error to the first polynomial fit: <br>
+![image](https://user-images.githubusercontent.com/103399658/231012080-6093f196-d72e-495e-b801-3f1635249b15.png)
+
+As we can see, the error on the outskirts of the data is 0, but the data in the middle is massive, once again signifying extreme overfitting by the 19th degree polynomial.
+
+**By implementing these algorithms and techniques, we were able to explore various data fitting models, analyze their performance on the given dataset, and gain insights into the effects of parameter choices and training data selection on model performance.**
 
 ## IV. Computational Results
 **Best-Fit Models** <br>
-We determined the optimal parameters for our sinusoidal model using the least-squares error minimization approach. The best-fit model was plotted against the original data points, revealing a close fit between the model and the data. We also fitted linear, parabolic, and 19th-degree polynomial models to subsets of the data and plotted the resulting fits.
+We determined the optimal parameters for our sinusoidal model using the least-squares error minimization approach. The best-fit model was plotted against the original data points, revealing a close fit between the model and the data. We also fitted linear, parabolic, and 19th-degree polynomial models to subsets of the data and plotted the resulting fits. <br>
+![image](https://user-images.githubusercontent.com/103399658/231012363-7ac7681f-7504-4cdd-b696-162e510cd58c.png)
+
 
 **Loss Landscapes** <br>
-To gain insights into the behavior of the models, we generated 2D loss landscapes by fixing two parameters at a time and sweeping through the values of the other two parameters. Visualizing these landscapes provided an understanding of how varying the parameters affected the error and helped identify local minima in the error landscape.
+To gain insights into the behavior of the models, we generated 2D loss landscapes by fixing two parameters at a time and sweeping through the values of the other two parameters. Visualizing these landscapes provided an understanding of how varying the parameters affected the error and helped identify local minima in the error landscape. <br>
+![image](https://user-images.githubusercontent.com/103399658/231012400-b7499d29-1c7d-41d6-b45c-fa2ebddef0cc.png)
 
 **Model Comparisons** <br>
 By comparing the linear, parabolic, and 19th-degree polynomial models, we observed the following:
