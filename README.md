@@ -48,11 +48,120 @@ In this section, we detail the implementation of the data fitting models and tec
 We implemented a sinusoidal model using Python, along with NumPy and SciPy libraries. The model function f(x, A, B, C, D) is defined as A * np.cos(B * x) + C * x + D. To find the minimum error and determine the parameters A, B, C, and D, we used the minimize function from SciPy's optimize module to minimize the error function error(params, x, y), which calculates the sum of squared differences between the predicted and observed data points divided by 4. The initial guess for parameters A, B, C, and D was [1, 1, 0.7, 26].
 <br>
 
+```
+import numpy as np
+from scipy.optimize import minimize
+import matplotlib.pyplot as plt
+
+# Initial guess for parameters A, B, C, and D
+initial_guess = [1, 1, 0.7, 26]
+
+# Minimizing the error function
+result = minimize(error, initial_guess, args=(X, Y))
+
+# Extracting the optimal parameters
+A, B, C, D = result.x
+
+print("Optimal parameters:")
+print(f"A: {A:.4f}, B: {B:.4f}, C: {C:.4f}, D: {D:.4f}")
+
+# Calculate the minimum error
+min_error = error(result.x, X, Y)
+print(f"Minimum error: {min_error:.4f}")
+```
+Where our error function is given by: 
+
+
+```
+# Error function
+def error(params, x, y):
+    A, B, C, D = params
+    return np.sum((f(x, A, B, C, D) - y) ** 2) / 4
+```
+
+This yields the best fit model given by 
+Optimal parameters:
+A: 2.1717, B: 0.9093, C: 0.7325, D: 31.4528
+Minimum error: 19.6600, 
+
+As shown by the graph: <br> ![image](https://user-images.githubusercontent.com/103399658/231007034-cd692770-bb28-411b-bc4f-8b54b9e8de9b.png)
+
+
 **Generating 2D Loss Landscape** <br>
 We generated a 2D loss landscape by fixing two parameters at a time and sweeping through values of the other two parameters. We used the error_landscape function, which calculates the error grid for a given combination of fixed and swept parameters. For each combination of fixed and swept parameters, we used the pcolor function from the matplotlib.pyplot library to visualize the results in a grid.
 
+```
+import itertools
+
+def error_landscape(fixed_params, param_ranges, X, Y):
+    grid_size = len(param_ranges[0])
+    error_grid = np.zeros((grid_size, grid_size))
+
+    for i, j in itertools.product(range(grid_size), range(grid_size)):
+        params = [fixed_params[0], param_ranges[0][i], param_ranges[1][j], fixed_params[1]]
+        error_grid[i, j] = error(params, X, Y)
+
+    return error_grid
+
+# Parameter sweep ranges
+sweep_range = np.linspace(-10, 10, 100)
+
+# Fixed and swept parameter combinations
+combinations = [
+    ((B, D), (A, C)),
+    ((A, C), (B, D)),
+    ((A, D), (B, C)),
+    ((A, B), (C, D)),
+]
+
+fig, axs = plt.subplots(2, 2, figsize=(12, 12))
+
+for idx, (fixed_params, swept_params) in enumerate(combinations):
+    error_grid = error_landscape(fixed_params, (sweep_range, sweep_range), X, Y)
+    ax = axs[idx // 2, idx % 2]
+    c = ax.pcolor(sweep_range, sweep_range, error_grid, shading='auto')
+    ax.set_xlabel(f'{swept_params[0]}')
+    ax.set_ylabel(f'{swept_params[1]}')
+    ax.set_title(f'Error landscape for {swept_params} with {fixed_params} fixed')
+    fig.colorbar(c, ax=ax)
+```
+
 **Fitting Linear, Parabolic, and 19th-Degree Polynomial Models** <br>
 Using the first 20 data points as training data, we fitted linear, parabolic, and 19th-degree polynomial models to the data using the Polynomial.fit function from the NumPy's polynomial module. We then computed the least-squares errors for these models on both the training and test data (the remaining 10 data points). We observed a large degree of overfitting for the 19th-degree polynomial model, resulting in 0 error on the training data but massive error on the test data.
+
+We took advantage of numpy's Polynomial library in order to fit a polynomial to our data: 
+```
+from numpy.polynomial import Polynomial
+
+# Split data into training and test sets
+X_train, Y_train = X[:20], Y[:20]
+X_test, Y_test = X[20:], Y[20:]
+
+# Fit models
+linear_fit = Polynomial.fit(X_train, Y_train, 1)
+parabola_fit = Polynomial.fit(X_train, Y_train, 2)
+poly19_fit = Polynomial.fit(X_train, Y_train, 19)
+```
+
+While yields the following result: 
+```
+Least-squares errors on training data:
+linear: 5.0299
+parabola: 4.5179
+19th-degree polynomial: 0.0000
+
+Least-squares errors on test data:
+linear: 11.3141
+parabola: 75.9277
+19th-degree polynomial: 38454308324079644442624.0000
+```
+
+The insane level of overfitting can be witnessed when looking at the graph: <br>
+![image](https://user-images.githubusercontent.com/103399658/231007939-908a6e42-8c09-4b13-9325-446c290cddd2.png)
+
+Removing the 19th degree polynomial, and we can see much less error: <br>
+![image](https://user-images.githubusercontent.com/103399658/231007973-1b80b7b5-cbc1-4107-9b80-5a52850e0b9c.png)
+
 
 **Modifying Training Data and Comparing Results** <br>
 We repeated the process of fitting linear, parabolic, and 19th-degree polynomial models, but this time we used the first 10 and last 10 data points as training data. The test data consisted of the 10 middle data points. We computed the least-squares errors for these models on both the training and test data and observed extreme overfitting for the 19th-degree polynomial model, with 0 error on the outskirts of the data but a massive error in the middle.
