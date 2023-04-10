@@ -173,6 +173,9 @@ The insane level of overfitting can be witnessed when looking at the graph: <br>
 Removing the 19th degree polynomial, and we can see much less error: <br>
 ![image](https://user-images.githubusercontent.com/103399658/231007973-1b80b7b5-cbc1-4107-9b80-5a52850e0b9c.png)
 
+This can also be viewed when limiting the y-bounds: <br>
+![image](https://user-images.githubusercontent.com/103399658/231012787-250329f8-4f36-427a-b303-8f93dc80c3fa.png)
+
 
 **Modifying Training Data and Comparing Results** <br>
 We repeated the process of fitting linear, parabolic, and 19th-degree polynomial models, but this time we used the first 10 and last 10 data points as training data. The test data consisted of the 10 middle data points. We computed the least-squares errors for these models on both the training and test data and observed extreme overfitting for the 19th-degree polynomial model, with 0 error on the outskirts of the data but a massive error in the middle.
